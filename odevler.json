@@ -1,3 +1,22 @@
 {
-  "odevler": []
+  "odevler": [
+    {
+      "id": "HO01",
+      "baslik": "İki Varyans Eşitliği için F-Testi",
+      "aciklama": "İki yığının varyanslarının eşitliğini test eden bir F-testi fonksiyonu yazılması ve verilen veri seti üzerinde uygulanması.",
+      "deadline": "",
+      "soru_sayisi": 2,
+      "dosyalar": [
+        {
+          "ad": "HO01_ODEV.zip",
+          "boyut": 906
+        },
+        {
+          "ad": "HO01_ODEV.m",
+          "boyut": 1329
+        }
+      ],
+      "yayinlanma_tarihi": "2026-04-14T22:09:20.639926"
+    }
+  ]
 }
