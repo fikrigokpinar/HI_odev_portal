@@ -201,6 +201,105 @@
         .copy-btn:hover {
             background: rgba(102, 126, 234, 0.4);
         }
+
+        /* ── Ödev Kartları ── */
+        .odevler-section { margin-bottom: 1.5rem; }
+        .odevler-section h2 {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .odev-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 0.8rem;
+            text-align: left;
+            transition: all 0.3s;
+        }
+        .odev-card:hover {
+            border-color: rgba(102, 126, 234, 0.4);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .odev-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .odev-baslik {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        .odev-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .badge-aktif {
+            background: rgba(40, 167, 69, 0.2);
+            color: #51cf66;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+        .badge-bitti {
+            background: rgba(220, 53, 69, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .odev-aciklama {
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-bottom: 0.6rem;
+            line-height: 1.4;
+        }
+
+        .odev-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 0.8rem;
+        }
+
+        .odev-indir-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #20bf6b, #0fb9b1);
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .odev-indir-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(32, 191, 107, 0.4);
+        }
+
+        .odev-dosyalar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .no-odev {
+            color: #666;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -208,6 +307,14 @@
         <div class="logo">📚</div>
         <h1>Hesaplamalı İstatistik</h1>
         <p class="subtitle">Ödev Yükleme Portalı</p>
+
+        <!-- Ödevler Bölümü -->
+        <div id="odevlerSection" class="odevler-section" style="display:none;">
+            <div class="card">
+                <h2>📝 Aktif Ödevler</h2>
+                <div id="odevlerList"></div>
+            </div>
+        </div>
 
         <!-- Ana Durum Kartı -->
         <div class="card">
@@ -255,9 +362,91 @@
     </div>
 
     <script>
-        // ── url.json dosyası GitHub Pages'ın aynı dizininde olacak ──
+        // ── url.json + odevler.json GitHub Pages'ın aynı dizininde ──
         const URL_JSON = './url.json';
+        const ODEVLER_JSON = './odevler.json';
         let currentURL = null;
+
+        // ── Ödevleri yükle ──
+        async function loadOdevler() {
+            const section = document.getElementById('odevlerSection');
+            const list = document.getElementById('odevlerList');
+
+            try {
+                const resp = await fetch(ODEVLER_JSON + '?t=' + Date.now());
+                if (!resp.ok) throw new Error('odevler.json bulunamadı');
+
+                const data = await resp.json();
+                const odevler = data.odevler || [];
+
+                if (odevler.length === 0) {
+                    section.style.display = 'none';
+                    return;
+                }
+
+                section.style.display = 'block';
+                list.innerHTML = '';
+
+                // Deadline'a göre sırala (aktifler önce)
+                const now = new Date();
+                odevler.sort((a, b) => {
+                    const aAktif = new Date(a.deadline) > now;
+                    const bAktif = new Date(b.deadline) > now;
+                    if (aAktif !== bAktif) return bAktif - aAktif;
+                    return new Date(b.deadline) - new Date(a.deadline);
+                });
+
+                odevler.forEach(odev => {
+                    const deadline = new Date(odev.deadline);
+                    const aktif = deadline > now;
+                    const kalanMs = deadline - now;
+                    let kalanStr = '';
+
+                    if (aktif) {
+                        const gun = Math.floor(kalanMs / (1000 * 60 * 60 * 24));
+                        const saat = Math.floor((kalanMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        kalanStr = gun > 0 ? `${gun} gün ${saat} saat kaldı` : `${saat} saat kaldı`;
+                    } else {
+                        kalanStr = 'Süre doldu';
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'odev-card';
+
+                    // Dosya indirme butonları
+                    let dosyaHTML = '';
+                    if (odev.dosyalar && odev.dosyalar.length > 0) {
+                        dosyaHTML = '<div class="odev-dosyalar">';
+                        odev.dosyalar.forEach(d => {
+                            const icon = d.ad.endsWith('.pdf') ? '📄' :
+                                         d.ad.endsWith('.m') ? '📐' :
+                                         d.ad.endsWith('.zip') ? '📦' : '📎';
+                            dosyaHTML += `<a href="./dosyalar/${d.ad}" download class="odev-indir-btn">${icon} ${d.ad}</a>`;
+                        });
+                        dosyaHTML += '</div>';
+                    }
+
+                    card.innerHTML = `
+                        <div class="odev-header">
+                            <span class="odev-baslik">${odev.id} — ${odev.baslik}</span>
+                            <span class="odev-badge ${aktif ? 'badge-aktif' : 'badge-bitti'}">
+                                ${aktif ? '🟢 Aktif' : '🔴 Bitti'}
+                            </span>
+                        </div>
+                        <div class="odev-aciklama">${odev.aciklama || ''}</div>
+                        <div class="odev-meta">
+                            <span>📅 Teslim: ${deadline.toLocaleDateString('tr-TR')} ${deadline.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})}</span>
+                            <span>⏳ ${kalanStr}</span>
+                        </div>
+                        ${dosyaHTML}
+                    `;
+                    list.appendChild(card);
+                });
+            } catch (err) {
+                // odevler.json yok veya hata — bölümü gizle
+                section.style.display = 'none';
+            }
+        }
 
         async function checkStatus() {
             const badge = document.getElementById('statusBadge');
@@ -341,10 +530,13 @@
         }
 
         // Sayfa açılınca kontrol et
+        loadOdevler();
         checkStatus();
 
         // Her 30 saniyede bir otomatik kontrol
         setInterval(checkStatus, 30000);
+        // Ödevleri 5 dakikada bir güncelle
+        setInterval(loadOdevler, 300000);
     </script>
 </body>
 </html>
