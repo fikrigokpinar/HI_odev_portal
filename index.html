@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Hesaplamalı İstatistik — Ödev Portalı</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .logo { font-size: 4rem; margin-bottom: 1rem; }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            color: #fff;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #aaa;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.07);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .status-online {
+            background: rgba(40, 167, 69, 0.2);
+            color: #51cf66;
+            border: 1px solid rgba(40, 167, 69, 0.4);
+        }
+
+        .status-offline {
+            background: rgba(220, 53, 69, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(220, 53, 69, 0.4);
+        }
+
+        .status-checking {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffd43b;
+            border: 1px solid rgba(255, 193, 7, 0.4);
+        }
+
+        .portal-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            text-decoration: none;
+            padding: 14px 36px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .portal-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .portal-link.disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .portal-link.disabled:hover {
+            transform: none;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-size: 0.9rem;
+        }
+
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #999; }
+        .info-value { color: #ddd; font-weight: 500; }
+
+        .refresh-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #aaa;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .refresh-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px; height: 16px;
+            border: 2px solid #ffd43b;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .pulse {
+            display: inline-block;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        .pulse-green {
+            background: #51cf66;
+            box-shadow: 0 0 0 0 rgba(81, 207, 102, 0.7);
+            animation: pulse-anim 2s infinite;
+        }
+
+        .pulse-red { background: #ff6b6b; }
+
+        @keyframes pulse-anim {
+            0% { box-shadow: 0 0 0 0 rgba(81, 207, 102, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(81, 207, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(81, 207, 102, 0); }
+        }
+
+        footer {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .url-display {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #667eea;
+            word-break: break-all;
+            margin: 0.5rem 0;
+        }
+
+        .copy-btn {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.4);
+            color: #667eea;
+            padding: 4px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 8px;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            background: rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">📚</div>
+        <h1>Hesaplamalı İstatistik</h1>
+        <p class="subtitle">Ödev Yükleme Portalı</p>
+
+        <!-- Ana Durum Kartı -->
+        <div class="card">
+            <div id="statusBadge" class="status-badge status-checking">
+                <span class="spinner"></span> Kontrol ediliyor...
+            </div>
+
+            <div id="portalInfo" style="display:none;">
+                <p style="margin-bottom: 0.5rem; color: #ccc;">Güncel portal adresi:</p>
+                <div class="url-display" id="urlDisplay">—</div>
+                <button class="copy-btn" onclick="copyURL()">📋 Kopyala</button>
+            </div>
+
+            <div id="portalButton" style="margin-top: 1.5rem;">
+                <a id="goBtn" href="#" class="portal-link disabled" target="_blank">
+                    ⏳ Yükleniyor...
+                </a>
+            </div>
+
+            <div style="margin-top: 1rem;">
+                <button class="refresh-btn" onclick="checkStatus()">🔄 Yenile</button>
+            </div>
+        </div>
+
+        <!-- Bilgi Kartı -->
+        <div class="card">
+            <div class="info-row">
+                <span class="info-label">📅 Son güncelleme</span>
+                <span class="info-value" id="lastUpdate">—</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">🕐 Kontrol zamanı</span>
+                <span class="info-value" id="checkTime">—</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">🔄 Otomatik yenileme</span>
+                <span class="info-value">Her 30 saniye</span>
+            </div>
+        </div>
+
+        <footer>
+            Hesaplamalı İstatistik Dersi — 2025-2026 Bahar<br>
+            Portal kapalıysa lütfen hocayı bilgilendirin.
+        </footer>
+    </div>
+
+    <script>
+        // ── url.json dosyası GitHub Pages'ın aynı dizininde olacak ──
+        const URL_JSON = './url.json';
+        let currentURL = null;
+
+        async function checkStatus() {
+            const badge = document.getElementById('statusBadge');
+            const urlDisplay = document.getElementById('urlDisplay');
+            const portalInfo = document.getElementById('portalInfo');
+            const goBtn = document.getElementById('goBtn');
+            const lastUpdate = document.getElementById('lastUpdate');
+            const checkTime = document.getElementById('checkTime');
+
+            // Kontrol ediliyor...
+            badge.className = 'status-badge status-checking';
+            badge.innerHTML = '<span class="spinner"></span> Kontrol ediliyor...';
+
+            checkTime.textContent = new Date().toLocaleString('tr-TR');
+
+            try {
+                // Cache'i bypass etmek için timestamp ekle
+                const resp = await fetch(URL_JSON + '?t=' + Date.now());
+                if (!resp.ok) throw new Error('url.json bulunamadı');
+
+                const data = await resp.json();
+                currentURL = data.url;
+                const updatedAt = data.updated_at || '—';
+
+                if (!currentURL || currentURL === '') {
+                    throw new Error('URL boş');
+                }
+
+                // Aktif URL var — portal erişilebilir mi kontrol et
+                portalInfo.style.display = 'block';
+                urlDisplay.textContent = currentURL;
+                lastUpdate.textContent = updatedAt;
+
+                // Portal'a ping at (basit fetch)
+                try {
+                    // CORS nedeniyle hata alınabilir, o durumda da "muhtemelen açık" deriz
+                    const ping = await fetch(currentURL, {
+                        mode: 'no-cors',
+                        cache: 'no-cache',
+                        signal: AbortSignal.timeout(8000)
+                    });
+
+                    // no-cors modda response.ok her zaman false ama status 0 olur
+                    badge.className = 'status-badge status-online';
+                    badge.innerHTML = '<span class="pulse pulse-green"></span> Portal Açık';
+                    goBtn.href = currentURL;
+                    goBtn.className = 'portal-link';
+                    goBtn.innerHTML = '🚀 Portala Git';
+                    goBtn.style.pointerEvents = 'auto';
+                } catch (pingErr) {
+                    // Timeout veya ağ hatası — portal kapalı olabilir
+                    badge.className = 'status-badge status-offline';
+                    badge.innerHTML = '<span class="pulse pulse-red"></span> Portal Şu An Kapalı';
+                    goBtn.href = currentURL;
+                    goBtn.className = 'portal-link';
+                    goBtn.innerHTML = '🔗 Yine de Dene';
+                    goBtn.style.pointerEvents = 'auto';
+                }
+
+            } catch (err) {
+                // url.json yok veya boş
+                portalInfo.style.display = 'none';
+                badge.className = 'status-badge status-offline';
+                badge.innerHTML = '<span class="pulse pulse-red"></span> Portal Kapalı';
+                goBtn.href = '#';
+                goBtn.className = 'portal-link disabled';
+                goBtn.innerHTML = '🔒 Portal Şu An Kapalı';
+                goBtn.style.pointerEvents = 'none';
+                lastUpdate.textContent = '—';
+            }
+        }
+
+        function copyURL() {
+            if (currentURL) {
+                navigator.clipboard.writeText(currentURL).then(() => {
+                    const btn = document.querySelector('.copy-btn');
+                    btn.textContent = '✅ Kopyalandı!';
+                    setTimeout(() => { btn.textContent = '📋 Kopyala'; }, 2000);
+                });
+            }
+        }
+
+        // Sayfa açılınca kontrol et
+        checkStatus();
+
+        // Her 30 saniyede bir otomatik kontrol
+        setInterval(checkStatus, 30000);
+    </script>
+</body>
+</html>
