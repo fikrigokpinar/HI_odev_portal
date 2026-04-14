@@ -1,3 +1,15 @@
 {
-    "odevler": []
+    "odevler": [
+        {
+            "id": "HO01",
+            "baslik": "Güven Aralığı ve F-Testi",
+            "aciklama": "İki yığın varyans oranı F-testi fonksiyonu yazma ve Monte Carlo simülasyonu ile doğrulama. Şablonu indirip tamamlayın ve portaldan yükleyin.",
+            "deadline": "2026-04-20T23:59:59",
+            "soru_sayisi": 2,
+            "dosyalar": [
+                {"ad": "HO01_ogrenci_sablonu.m", "boyut": 542}
+            ],
+            "yayinlanma_tarihi": "2026-04-14T15:20:00"
+        }
+    ]
 }
