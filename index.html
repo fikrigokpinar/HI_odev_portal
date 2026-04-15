@@ -6,662 +6,650 @@
     <title>📚 Hesaplamalı İstatistik — Ödev Portalı</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: #e2e8f0;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #e0e0e0;
         }
 
-        .container {
-            max-width: 600px;
-            width: 90%;
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d6a9f 50%, #1e3a5f 100%);
+            padding: 40px 20px 30px;
             text-align: center;
+            border-bottom: 3px solid #3b82f6;
+            position: relative;
+            overflow: hidden;
         }
-
-        .logo { font-size: 4rem; margin-bottom: 1rem; }
-
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.3rem;
-            color: #fff;
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 60%);
+            animation: pulse 8s ease-in-out infinite;
         }
-
-        .subtitle {
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        .header p {
+            color: #94a3b8;
             font-size: 1rem;
-            color: #aaa;
-            margin-bottom: 2rem;
+            position: relative;
         }
 
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* Card */
         .card {
-            background: rgba(255,255,255,0.07);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.2);
             border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            transition: border-color 0.3s;
         }
-
-        .status-badge {
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
+        .card:hover {
+            border-color: rgba(59, 130, 246, 0.5);
         }
-
-        .status-online {
-            background: rgba(40, 167, 69, 0.2);
-            color: #51cf66;
-            border: 1px solid rgba(40, 167, 69, 0.4);
-        }
-
-        .status-offline {
-            background: rgba(220, 53, 69, 0.2);
-            color: #ff6b6b;
-            border: 1px solid rgba(220, 53, 69, 0.4);
-        }
-
-        .status-checking {
-            background: rgba(255, 193, 7, 0.2);
-            color: #ffd43b;
-            border: 1px solid rgba(255, 193, 7, 0.4);
-        }
-
-        .portal-link {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: #fff;
-            text-decoration: none;
-            padding: 14px 36px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-top: 1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .portal-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        .portal-link.disabled {
-            background: #555;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .portal-link.disabled:hover {
-            transform: none;
-        }
-
-        .info-row {
+        .card h2 {
+            color: #60a5fa;
+            font-size: 1.3rem;
+            margin-bottom: 16px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            font-size: 0.9rem;
+            gap: 10px;
         }
 
-        .info-row:last-child { border-bottom: none; }
-        .info-label { color: #999; }
-        .info-value { color: #ddd; font-weight: 500; }
-
-        .refresh-btn {
-            background: none;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #aaa;
-            padding: 8px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.3s;
-            margin-top: 0.5rem;
-        }
-
-        .refresh-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 16px; height: 16px;
-            border: 2px solid #ffd43b;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            vertical-align: middle;
-            margin-right: 6px;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .pulse {
-            display: inline-block;
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            margin-right: 6px;
-            vertical-align: middle;
-        }
-
-        .pulse-green {
-            background: #51cf66;
-            box-shadow: 0 0 0 0 rgba(81, 207, 102, 0.7);
-            animation: pulse-anim 2s infinite;
-        }
-
-        .pulse-red { background: #ff6b6b; }
-
-        @keyframes pulse-anim {
-            0% { box-shadow: 0 0 0 0 rgba(81, 207, 102, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(81, 207, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(81, 207, 102, 0); }
-        }
-
-        footer {
-            margin-top: 2rem;
-            font-size: 0.75rem;
-            color: #666;
-        }
-
-        .url-display {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            padding: 10px;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: 0.85rem;
-            color: #667eea;
-            word-break: break-all;
-            margin: 0.5rem 0;
-        }
-
-        .copy-btn {
-            background: rgba(102, 126, 234, 0.2);
-            border: 1px solid rgba(102, 126, 234, 0.4);
-            color: #667eea;
-            padding: 4px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-left: 8px;
-            transition: all 0.2s;
-        }
-        .copy-btn:hover {
-            background: rgba(102, 126, 234, 0.4);
-        }
-
-        /* ── Ödev Kartları ── */
-        .odevler-section { margin-bottom: 1.5rem; }
-        .odevler-section h2 {
-            font-size: 1.2rem;
-            color: #fff;
-            margin-bottom: 1rem;
-        }
-
-        .odev-card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+        /* Bilgi kutusu */
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
             border-radius: 12px;
-            padding: 1.2rem;
-            margin-bottom: 0.8rem;
-            text-align: left;
+            padding: 16px 20px;
+            margin: 12px 0;
+        }
+        .warn-box {
+            background: rgba(234, 179, 8, 0.1);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 12px 0;
+        }
+        .error-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 12px 0;
+        }
+        .success-box {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 12px 0;
+        }
+
+        /* E-posta adresi */
+        .email-display {
+            background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(139,92,246,0.15));
+            border: 2px solid rgba(59,130,246,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 16px 0;
+        }
+        .email-display .label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+        .email-display .address {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #60a5fa;
+            font-family: monospace;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .email-display .address:hover {
+            color: #93c5fd;
+        }
+        .email-display .hint {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 6px;
+        }
+
+        /* Konu formatı */
+        .format-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 10px;
+            padding: 16px;
+            margin: 12px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .format-box .example {
+            font-size: 1.1rem;
+            color: #a78bfa;
+            margin: 8px 0;
+        }
+        .format-box .desc {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        /* Ödev kartı */
+        .odev-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 14px 0;
             transition: all 0.3s;
         }
         .odev-card:hover {
-            border-color: rgba(102, 126, 234, 0.4);
-            background: rgba(255,255,255,0.08);
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
         }
-
-        .odev-header {
+        .odev-card .odev-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
+            align-items: flex-start;
+            margin-bottom: 12px;
         }
-        .odev-baslik {
-            font-size: 1rem;
+        .odev-card .odev-title {
+            font-size: 1.1rem;
             font-weight: 600;
-            color: #fff;
+            color: #e2e8f0;
         }
-        .odev-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-        .badge-aktif {
-            background: rgba(40, 167, 69, 0.2);
-            color: #51cf66;
-            border: 1px solid rgba(40, 167, 69, 0.3);
-        }
-        .badge-bitti {
-            background: rgba(220, 53, 69, 0.2);
-            color: #ff6b6b;
-            border: 1px solid rgba(220, 53, 69, 0.3);
-        }
-
-        .odev-aciklama {
-            font-size: 0.85rem;
-            color: #aaa;
-            margin-bottom: 0.6rem;
-            line-height: 1.4;
-        }
-
-        .odev-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .odev-card .odev-badge {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            padding: 4px 12px;
+            border-radius: 20px;
             font-size: 0.8rem;
-            color: #888;
-            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+        .odev-card .odev-desc {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .odev-card .odev-yonerge {
+            background: rgba(234, 179, 8, 0.08);
+            border: 1px solid rgba(234, 179, 8, 0.2);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin: 10px 0;
+            font-size: 0.88rem;
+            color: #fbbf24;
+        }
+        .odev-card .odev-yonerge::before {
+            content: '📝 Yönerge: ';
+            font-weight: 600;
         }
 
-        .odev-indir-btn {
+        /* Countdown */
+        .countdown {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            margin: 8px 0;
+        }
+        .countdown .unit {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(59,130,246,0.2);
+            border-radius: 8px;
+            padding: 6px 10px;
+            text-align: center;
+            min-width: 48px;
+        }
+        .countdown .unit .num {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+        .countdown .unit .lbl {
+            font-size: 0.65rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        .countdown.expired .unit .num { color: #ef4444; }
+        .countdown.warning .unit .num { color: #f59e0b; }
+        .countdown.ok .unit .num { color: #22c55e; }
+
+        /* Dosya linkleri */
+        .file-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .file-link {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: linear-gradient(135deg, #20bf6b, #0fb9b1);
-            color: #fff;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            padding: 8px 16px;
+            border-radius: 8px;
             text-decoration: none;
-            padding: 8px 18px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-        }
-        .odev-indir-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(32, 191, 107, 0.4);
-        }
-
-        .odev-dosyalar {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .no-odev {
-            color: #666;
             font-size: 0.9rem;
-            font-style: italic;
+            transition: all 0.2s;
+        }
+        .file-link:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+            color: #93c5fd;
         }
 
-        /* ── Countdown Timer ── */
-        .countdown-timer {
+        /* Portal durumu */
+        .portal-status {
             display: flex;
-            gap: 8px;
             align-items: center;
-            justify-content: center;
-            margin: 8px 0;
+            gap: 10px;
+            padding: 14px 20px;
+            border-radius: 10px;
+            margin: 12px 0;
         }
-        .countdown-box {
-            background: rgba(0,0,0,0.3);
-            border-radius: 8px;
-            padding: 6px 10px;
-            min-width: 52px;
+        .portal-status.online {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        .portal-status.offline {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .portal-status .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+        .portal-status.online .dot { background: #22c55e; }
+        .portal-status.offline .dot { background: #ef4444; }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Kurallar listesi */
+        .rules-list {
+            list-style: none;
+            padding: 0;
+        }
+        .rules-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .rules-list li:last-child { border-bottom: none; }
+        .rules-list .icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* No ödevler mesajı */
+        .no-odev {
             text-align: center;
+            padding: 40px;
+            color: #64748b;
         }
-        .countdown-box .cd-val {
-            font-size: 1.2rem;
-            font-weight: 700;
-            line-height: 1;
-        }
-        .countdown-box .cd-label {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            opacity: 0.7;
-        }
-        .countdown-sep {
-            font-size: 1.2rem;
-            font-weight: 700;
-            opacity: 0.4;
-        }
+        .no-odev .emoji { font-size: 3rem; margin-bottom: 12px; }
 
-        /* Renk durumları */
-        .cd-green .cd-val { color: #51cf66; }
-        .cd-green { border: 1px solid rgba(81,207,102,0.3); }
-        .cd-orange .cd-val { color: #ffa94d; }
-        .cd-orange { border: 1px solid rgba(255,169,77,0.3); }
-        .cd-red .cd-val { color: #ff6b6b; }
-        .cd-red { border: 1px solid rgba(255,107,107,0.3); }
-
-        .deadline-text {
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #475569;
             font-size: 0.8rem;
-            color: #999;
-            margin-top: 4px;
-        }
-        .deadline-text strong {
-            color: #ccc;
         }
 
-        .bitti-banner {
-            background: rgba(220,53,69,0.1);
-            border: 1px solid rgba(220,53,69,0.3);
-            border-radius: 8px;
-            padding: 8px 14px;
-            color: #ff6b6b;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-align: center;
-            margin: 8px 0;
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.5rem; }
+            .email-display .address { font-size: 1rem; }
+            .format-box .example { font-size: 0.95rem; }
+            .container { padding: 16px 12px; }
+            .card { padding: 18px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>📚 Hesaplamalı İstatistik — Ödev Portalı</h1>
+        <p>Ödev teslimi, deadline takibi ve duyurular</p>
+    </div>
+
     <div class="container">
-        <div class="logo">📚</div>
-        <h1>Hesaplamalı İstatistik</h1>
-        <p class="subtitle">Ödev Yükleme Portalı</p>
 
-        <!-- Ödevler Bölümü -->
-        <div id="odevlerSection" class="odevler-section" style="display:none;">
-            <div class="card">
-                <h2>📝 Aktif Ödevler</h2>
-                <div id="odevlerList"></div>
-            </div>
-        </div>
-
-        <!-- Ana Durum Kartı -->
+        <!-- E-posta ile Teslim -->
         <div class="card">
-            <div id="statusBadge" class="status-badge status-checking">
-                <span class="spinner"></span> Kontrol ediliyor...
+            <h2>📧 Ödev Teslim Yöntemi</h2>
+            <p style="margin-bottom: 12px;">Ödevlerinizi aşağıdaki e-posta adresine gönderin. Sistem otomatik olarak ödevinizi alacak ve onay maili gönderecektir.</p>
+
+            <div class="email-display">
+                <div class="label">📮 Ödev Gönderim Adresi</div>
+                <div class="address" id="emailAddr" onclick="copyEmail()" title="Kopyalamak için tıklayın">
+                    hesaplamali.istatisitik.odev@gmail.com
+                </div>
+                <div class="hint" id="copyHint">📋 Kopyalamak için tıklayın</div>
             </div>
 
-            <div id="portalInfo" style="display:none;">
-                <p style="margin-bottom: 0.5rem; color: #ccc;">Güncel portal adresi:</p>
-                <div class="url-display" id="urlDisplay">—</div>
-                <button class="copy-btn" onclick="copyURL()">📋 Kopyala</button>
+            <div class="format-box">
+                <div class="desc">📌 E-posta konu satırı formatı:</div>
+                <div class="example">[HI-Odev<span style="color:#f59e0b">X</span>] <span style="color:#22c55e">OgrenciNo</span> <span style="color:#38bdf8">Ad Soyad</span></div>
+                <div class="desc" style="margin-top:8px;">
+                    <strong>Örnek:</strong>
+                    <code style="color:#a78bfa; background:rgba(0,0,0,0.3); padding:2px 8px; border-radius:4px;">[HI-Odev1] 2023001 Ali Yılmaz</code>
+                </div>
             </div>
 
-            <div id="portalButton" style="margin-top: 1.5rem;">
-                <a id="goBtn" href="#" class="portal-link disabled" target="_blank">
-                    ⏳ Yükleniyor...
-                </a>
+            <div class="info-box" style="margin-top: 16px;">
+                <strong>📋 Teslim Kuralları:</strong>
+                <ul class="rules-list" style="margin-top: 8px;">
+                    <li><span class="icon">📎</span> MATLAB (.m) dosyanızı <strong>ek (attachment)</strong> olarak gönderin</li>
+                    <li><span class="icon">⛔</span> Dosyayı e-posta gövdesine yapıştırmayın</li>
+                    <li><span class="icon">📝</span> Konu satırını yukarıdaki formatta <strong>eksiksiz</strong> yazın</li>
+                    <li><span class="icon">🔁</span> Birden fazla gönderebilirsiniz — son gönderilen geçerlidir</li>
+                    <li><span class="icon">✅</span> Başarılı teslimlerde otomatik onay maili alırsınız</li>
+                    <li><span class="icon">❌</span> Hatalı gönderimde düzeltme rehberi maili gelir</li>
+                </ul>
             </div>
 
-            <div style="margin-top: 1rem;">
-                <button class="refresh-btn" onclick="checkStatus()">🔄 Yenile</button>
+            <div class="warn-box">
+                <strong>⏰ Geç Teslim Uyarısı:</strong> Deadline sonrası gönderilen ödevlerden <strong>%10</strong> puan düşülür!
             </div>
         </div>
 
-        <!-- Bilgi Kartı -->
+        <!-- Portal Durumu -->
         <div class="card">
-            <div class="info-row">
-                <span class="info-label">📅 Son güncelleme</span>
-                <span class="info-value" id="lastUpdate">—</span>
+            <h2>🌐 Portal Durumu</h2>
+            <div id="portalDurum" class="portal-status offline">
+                <div class="dot"></div>
+                <div>
+                    <strong id="portalDurumText">Kontrol ediliyor...</strong>
+                    <div id="portalUrl" style="font-size: 0.85rem; color: #94a3b8; margin-top:2px;"></div>
+                </div>
             </div>
-            <div class="info-row">
-                <span class="info-label">🕐 Kontrol zamanı</span>
-                <span class="info-value" id="checkTime">—</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">🔄 Otomatik yenileme</span>
-                <span class="info-value">Her 30 saniye</span>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 8px;">
+                Portal açıksa ödevlerinizi web üzerinden de yükleyebilirsiniz. Kapalıysa e-posta ile gönderin.
+            </p>
+        </div>
+
+        <!-- Aktif Ödevler -->
+        <div class="card">
+            <h2>📝 Aktif Ödevler</h2>
+            <div id="odevListesi">
+                <div class="no-odev">
+                    <div class="emoji">⏳</div>
+                    <p>Ödevler yükleniyor...</p>
+                </div>
             </div>
         </div>
 
-        <footer>
-            Hesaplamalı İstatistik Dersi — 2025-2026 Bahar<br>
-            Portal kapalıysa lütfen hocayı bilgilendirin.
-        </footer>
+        <!-- İletişim -->
+        <div class="card">
+            <h2>💬 İletişim & Destek</h2>
+            <p>Teknik sorun yaşarsanız derste veya e-posta ile bildiriniz.</p>
+            <div class="info-box" style="margin-top: 12px;">
+                <p><strong>Sık Yapılan Hatalar:</strong></p>
+                <ul class="rules-list" style="margin-top: 8px;">
+                    <li><span class="icon">❓</span> Konu satırında ödev numarası veya öğrenci numarası eksik</li>
+                    <li><span class="icon">❓</span> .m dosyası ek olarak eklenmemiş (gövdeye yapıştırılmış)</li>
+                    <li><span class="icon">❓</span> Farklı formatta dosya gönderilmiş (.py, .txt vb.)</li>
+                    <li><span class="icon">❓</span> Öğrenci numarası kayıtlı listede yok</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        Hesaplamalı İstatistik — Ödev Portal Sistemi &copy; 2024-2025<br>
+        Son güncelleme: <span id="sonGuncelleme">—</span>
     </div>
 
     <script>
-        // ── url.json + odevler.json GitHub Pages'ın aynı dizininde ──
-        const URL_JSON = './url.json';
-        const ODEVLER_JSON = './odevler.json';
-        let currentURL = null;
-        let countdownIntervals = [];  // Canlı geri sayım timer'ları
+        const REPO_BASE = '';  // Aynı repo'dan çekiyoruz (relative path)
+        const ODEVLER_JSON_URL = 'odevler.json';
+        const URL_JSON_URL = 'url.json';
 
-        // ── Deadline parse — hem "DD/MM/YYYY HH:mm" hem ISO hem "YYYY-MM-DD HH:mm" destekler ──
-        function parseDeadline(str) {
-            if (!str) return null;
-            // ISO format (2026-04-21T23:59:00)
-            if (str.includes('T')) return new Date(str);
-            // DD/MM/YYYY HH:mm
-            const m1 = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})$/);
-            if (m1) return new Date(+m1[3], +m1[2]-1, +m1[1], +m1[4], +m1[5]);
-            // YYYY-MM-DD HH:mm
-            const m2 = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{2})$/);
-            if (m2) return new Date(+m2[1], +m2[2]-1, +m2[3], +m2[4], +m2[5]);
-            // Fallback
-            const d = new Date(str);
-            return isNaN(d.getTime()) ? null : d;
+        // E-posta kopyalama
+        function copyEmail() {
+            const email = 'hesaplamali.istatisitik.odev@gmail.com';
+            navigator.clipboard.writeText(email).then(() => {
+                document.getElementById('copyHint').textContent = '✅ Kopyalandı!';
+                setTimeout(() => {
+                    document.getElementById('copyHint').textContent = '📋 Kopyalamak için tıklayın';
+                }, 2000);
+            }).catch(() => {
+                // Fallback
+                const ta = document.createElement('textarea');
+                ta.value = email;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                document.getElementById('copyHint').textContent = '✅ Kopyalandı!';
+                setTimeout(() => {
+                    document.getElementById('copyHint').textContent = '📋 Kopyalamak için tıklayın';
+                }, 2000);
+            });
         }
 
-        // ── Countdown renk sınıfı ──
-        function countdownColor(ms) {
-            if (ms <= 0) return 'cd-red';
-            if (ms < 1000 * 60 * 60 * 6) return 'cd-red';       // < 6 saat
-            if (ms < 1000 * 60 * 60 * 24) return 'cd-orange';    // < 1 gün
-            return 'cd-green';
-        }
-
-        // ── Countdown HTML üret ──
-        function buildCountdownHTML(kalanMs, color) {
-            if (kalanMs <= 0) {
-                return `<div class="bitti-banner">⏰ Teslim Süresi Doldu!</div>`;
-            }
-            const gun  = Math.floor(kalanMs / (1000*60*60*24));
-            const saat = Math.floor((kalanMs % (1000*60*60*24)) / (1000*60*60));
-            const dk   = Math.floor((kalanMs % (1000*60*60)) / (1000*60));
-            const sn   = Math.floor((kalanMs % (1000*60)) / 1000);
-
-            return `<div class="countdown-timer">
-                <div class="countdown-box ${color}"><div class="cd-val">${String(gun).padStart(2,'0')}</div><div class="cd-label">Gün</div></div>
-                <span class="countdown-sep">:</span>
-                <div class="countdown-box ${color}"><div class="cd-val">${String(saat).padStart(2,'0')}</div><div class="cd-label">Saat</div></div>
-                <span class="countdown-sep">:</span>
-                <div class="countdown-box ${color}"><div class="cd-val">${String(dk).padStart(2,'0')}</div><div class="cd-label">Dakika</div></div>
-                <span class="countdown-sep">:</span>
-                <div class="countdown-box ${color}"><div class="cd-val">${String(sn).padStart(2,'0')}</div><div class="cd-label">Saniye</div></div>
-            </div>`;
-        }
-
-        // ── Ödevleri yükle ──
-        async function loadOdevler() {
-            const section = document.getElementById('odevlerSection');
-            const list = document.getElementById('odevlerList');
-
-            // Önceki interval'leri temizle
-            countdownIntervals.forEach(id => clearInterval(id));
-            countdownIntervals = [];
-
+        // Portal durumunu kontrol et
+        async function portalDurumKontrol() {
             try {
-                const resp = await fetch(ODEVLER_JSON + '?t=' + Date.now());
-                if (!resp.ok) throw new Error('odevler.json bulunamadı');
+                const r = await fetch(URL_JSON_URL + '?t=' + Date.now());
+                if (!r.ok) throw new Error('url.json yok');
+                const data = await r.json();
 
-                const data = await resp.json();
+                const el = document.getElementById('portalDurum');
+                const text = document.getElementById('portalDurumText');
+                const urlEl = document.getElementById('portalUrl');
+
+                if (data.status === 'online' && data.url) {
+                    el.className = 'portal-status online';
+                    text.textContent = '🟢 Portal Aktif — Web üzerinden de yükleyebilirsiniz';
+                    urlEl.innerHTML = '<a href="' + data.url + '" target="_blank" style="color:#60a5fa;">' + data.url + '</a>';
+                } else {
+                    el.className = 'portal-status offline';
+                    text.textContent = '🔴 Portal Kapalı — Lütfen e-posta ile gönderin';
+                    urlEl.textContent = data.updated_at ? 'Son güncelleme: ' + data.updated_at : '';
+                }
+            } catch (e) {
+                const el = document.getElementById('portalDurum');
+                const text = document.getElementById('portalDurumText');
+                el.className = 'portal-status offline';
+                text.textContent = '🔴 Portal durumu bilinmiyor — E-posta ile gönderin';
+            }
+        }
+
+        // Countdown hesapla
+        function countdownHesapla(deadlineStr) {
+            const deadline = new Date(deadlineStr);
+            const now = new Date();
+            const diff = deadline - now;
+
+            if (diff <= 0) {
+                return { expired: true, text: 'Süre doldu!', html: '' };
+            }
+
+            const gun = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const saat = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const dk = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const sn = Math.floor((diff % (1000 * 60)) / 1000);
+
+            let cls = 'ok';
+            if (gun === 0 && saat < 6) cls = 'expired';
+            else if (gun <= 1) cls = 'warning';
+
+            const html = `
+                <div class="countdown ${cls}">
+                    <div class="unit"><div class="num">${gun}</div><div class="lbl">Gün</div></div>
+                    <div class="unit"><div class="num">${saat}</div><div class="lbl">Saat</div></div>
+                    <div class="unit"><div class="num">${dk}</div><div class="lbl">Dk</div></div>
+                    <div class="unit"><div class="num">${sn}</div><div class="lbl">Sn</div></div>
+                </div>
+            `;
+
+            return { expired: false, text: `${gun}g ${saat}s ${dk}dk`, html };
+        }
+
+        // Deadline formatla
+        function deadlineFormatla(isoStr) {
+            try {
+                const d = new Date(isoStr);
+                const gun = String(d.getDate()).padStart(2, '0');
+                const ay = String(d.getMonth() + 1).padStart(2, '0');
+                const yil = d.getFullYear();
+                const saat = String(d.getHours()).padStart(2, '0');
+                const dk = String(d.getMinutes()).padStart(2, '0');
+                return `${gun}/${ay}/${yil} ${saat}:${dk}`;
+            } catch {
+                return isoStr;
+            }
+        }
+
+        // Ödevleri yükle
+        async function odevleriYukle() {
+            const container = document.getElementById('odevListesi');
+            try {
+                const r = await fetch(ODEVLER_JSON_URL + '?t=' + Date.now());
+                if (!r.ok) throw new Error('odevler.json yok');
+                const data = await r.json();
                 const odevler = data.odevler || [];
 
                 if (odevler.length === 0) {
-                    section.style.display = 'none';
+                    container.innerHTML = `
+                        <div class="no-odev">
+                            <div class="emoji">📭</div>
+                            <p>Henüz yayınlanmış ödev yok.</p>
+                            <p style="font-size:0.85rem; margin-top:8px;">Yeni ödevler burada görünecek.</p>
+                        </div>
+                    `;
                     return;
                 }
 
-                section.style.display = 'block';
-                list.innerHTML = '';
+                let html = '';
+                odevler.forEach(odev => {
+                    const cd = odev.deadline ? countdownHesapla(odev.deadline) : null;
+                    const dlStr = odev.deadline ? deadlineFormatla(odev.deadline) : '?';
 
-                // Deadline'a göre sırala (aktifler önce)
-                const now = new Date();
-                odevler.sort((a, b) => {
-                    const dA = parseDeadline(a.deadline);
-                    const dB = parseDeadline(b.deadline);
-                    const aAktif = dA && dA > now;
-                    const bAktif = dB && dB > now;
-                    if (aAktif !== bAktif) return bAktif - aAktif;
-                    return (dB||0) - (dA||0);
-                });
+                    html += `<div class="odev-card">`;
+                    html += `<div class="odev-header">`;
+                    html += `<div class="odev-title">📋 ${odev.id} — ${odev.baslik}</div>`;
+                    html += `<div class="odev-badge">${odev.soru_sayisi || '?'} Soru</div>`;
+                    html += `</div>`;
 
-                odevler.forEach((odev, idx) => {
-                    const deadline = parseDeadline(odev.deadline);
-                    const aktif = deadline && deadline > now;
-                    const kalanMs = deadline ? deadline - now : 0;
+                    if (odev.aciklama) {
+                        html += `<div class="odev-desc">${odev.aciklama}</div>`;
+                    }
 
-                    const card = document.createElement('div');
-                    card.className = 'odev-card';
+                    if (odev.yonerge) {
+                        html += `<div class="odev-yonerge">${odev.yonerge}</div>`;
+                    }
 
-                    // Dosya indirme butonları
-                    let dosyaHTML = '';
+                    // Deadline
+                    html += `<div style="margin: 10px 0;">`;
+                    html += `<span style="color:#94a3b8; font-size:0.9rem;">📅 Deadline: </span>`;
+                    html += `<strong style="color:#f59e0b;">${dlStr}</strong>`;
+                    html += `</div>`;
+
+                    // Countdown
+                    if (cd) {
+                        if (cd.expired) {
+                            html += `<div class="error-box">⏰ <strong>Süre doldu!</strong> Geç teslimlerde <strong>%10 ceza</strong> uygulanır.</div>`;
+                        } else {
+                            html += `<div id="cd_${odev.id}" data-deadline="${odev.deadline}">${cd.html}</div>`;
+                        }
+                    }
+
+                    // Dosyalar
                     if (odev.dosyalar && odev.dosyalar.length > 0) {
-                        dosyaHTML = '<div class="odev-dosyalar">';
+                        html += `<div class="file-links">`;
                         odev.dosyalar.forEach(d => {
-                            const icon = d.ad.endsWith('.pdf') ? '📄' :
-                                         d.ad.endsWith('.m') ? '📐' :
-                                         d.ad.endsWith('.zip') ? '📦' : '📎';
-                            dosyaHTML += `<a href="./dosyalar/${d.ad}" download class="odev-indir-btn">${icon} ${d.ad}</a>`;
+                            const icon = d.ad.endsWith('.zip') ? '📦' : (d.ad.endsWith('.m') ? '📄' : '📎');
+                            const boyut = d.boyut > 1024 ? `${(d.boyut / 1024).toFixed(1)} KB` : `${d.boyut} B`;
+                            html += `<a href="dosyalar/${d.ad}" class="file-link" download>${icon} ${d.ad} <span style="color:#64748b;font-size:0.75rem;">(${boyut})</span></a>`;
                         });
-                        dosyaHTML += '</div>';
+                        html += `</div>`;
                     }
 
-                    // Deadline string
-                    const deadlineStr = deadline
-                        ? deadline.toLocaleDateString('tr-TR', {day:'2-digit', month:'long', year:'numeric'}) +
-                          ' ' + deadline.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})
-                        : 'Belirtilmemiş';
+                    // Konu satırı örneği
+                    const odevNum = odev.id.replace('HO', '').replace(/^0+/, '') || '1';
+                    html += `<div class="format-box" style="margin-top: 14px;">`;
+                    html += `<div class="desc">📧 Bu ödev için e-posta konu satırı:</div>`;
+                    html += `<div class="example">[HI-Odev${odevNum}] <span style="color:#22c55e;">OgrenciNo</span> <span style="color:#38bdf8;">Ad Soyad</span></div>`;
+                    html += `</div>`;
 
-                    // Countdown container id
-                    const cdId = `countdown-${idx}`;
-                    const color = countdownColor(kalanMs);
-
-                    card.innerHTML = `
-                        <div class="odev-header">
-                            <span class="odev-baslik">${odev.id} — ${odev.baslik}</span>
-                            <span class="odev-badge ${aktif ? 'badge-aktif' : 'badge-bitti'}">
-                                ${aktif ? '🟢 Aktif' : '🔴 Bitti'}
-                            </span>
-                        </div>
-                        <div class="odev-aciklama">${odev.aciklama || ''}</div>
-                        <div class="deadline-text">📅 Son Teslim: <strong>${deadlineStr}</strong></div>
-                        <div id="${cdId}">${buildCountdownHTML(kalanMs, color)}</div>
-                        ${dosyaHTML}
-                    `;
-                    list.appendChild(card);
-
-                    // Canlı geri sayım — her saniye güncelle
-                    if (deadline) {
-                        const intId = setInterval(() => {
-                            const ms = deadline - new Date();
-                            const el = document.getElementById(cdId);
-                            if (!el) { clearInterval(intId); return; }
-                            const c = countdownColor(ms);
-                            el.innerHTML = buildCountdownHTML(ms, c);
-                            if (ms <= 0) clearInterval(intId);
-                        }, 1000);
-                        countdownIntervals.push(intId);
-                    }
+                    html += `</div>`;
                 });
-            } catch (err) {
-                // odevler.json yok veya hata — bölümü gizle
-                section.style.display = 'none';
+
+                container.innerHTML = html;
+
+            } catch (e) {
+                container.innerHTML = `
+                    <div class="no-odev">
+                        <div class="emoji">📭</div>
+                        <p>Ödevler yüklenemedi.</p>
+                        <p style="font-size:0.85rem; margin-top:8px; color:#64748b;">${e.message}</p>
+                    </div>
+                `;
             }
         }
 
-        async function checkStatus() {
-            const badge = document.getElementById('statusBadge');
-            const urlDisplay = document.getElementById('urlDisplay');
-            const portalInfo = document.getElementById('portalInfo');
-            const goBtn = document.getElementById('goBtn');
-            const lastUpdate = document.getElementById('lastUpdate');
-            const checkTime = document.getElementById('checkTime');
-
-            // Kontrol ediliyor...
-            badge.className = 'status-badge status-checking';
-            badge.innerHTML = '<span class="spinner"></span> Kontrol ediliyor...';
-
-            checkTime.textContent = new Date().toLocaleString('tr-TR');
-
-            try {
-                // Cache'i bypass etmek için timestamp ekle
-                const resp = await fetch(URL_JSON + '?t=' + Date.now());
-                if (!resp.ok) throw new Error('url.json bulunamadı');
-
-                const data = await resp.json();
-                currentURL = data.url;
-                const updatedAt = data.updated_at || '—';
-
-                if (!currentURL || currentURL === '') {
-                    throw new Error('URL boş');
+        // Countdown güncelle (her saniye)
+        function countdownGuncelle() {
+            document.querySelectorAll('[data-deadline]').forEach(el => {
+                const dl = el.getAttribute('data-deadline');
+                const cd = countdownHesapla(dl);
+                if (cd.expired) {
+                    el.innerHTML = `<div class="error-box">⏰ <strong>Süre doldu!</strong> Geç teslimlerde <strong>%10 ceza</strong> uygulanır.</div>`;
+                    el.removeAttribute('data-deadline');
+                } else {
+                    el.innerHTML = cd.html;
                 }
-
-                // Aktif URL var — portal erişilebilir mi kontrol et
-                portalInfo.style.display = 'block';
-                urlDisplay.textContent = currentURL;
-                lastUpdate.textContent = updatedAt;
-
-                // Portal'a ping at (basit fetch)
-                try {
-                    // CORS nedeniyle hata alınabilir, o durumda da "muhtemelen açık" deriz
-                    const ping = await fetch(currentURL, {
-                        mode: 'no-cors',
-                        cache: 'no-cache',
-                        signal: AbortSignal.timeout(8000)
-                    });
-
-                    // no-cors modda response.ok her zaman false ama status 0 olur
-                    badge.className = 'status-badge status-online';
-                    badge.innerHTML = '<span class="pulse pulse-green"></span> Portal Açık';
-                    goBtn.href = currentURL;
-                    goBtn.className = 'portal-link';
-                    goBtn.innerHTML = '🚀 Portala Git';
-                    goBtn.style.pointerEvents = 'auto';
-                } catch (pingErr) {
-                    // Timeout veya ağ hatası — portal kapalı olabilir
-                    badge.className = 'status-badge status-offline';
-                    badge.innerHTML = '<span class="pulse pulse-red"></span> Portal Şu An Kapalı';
-                    goBtn.href = currentURL;
-                    goBtn.className = 'portal-link';
-                    goBtn.innerHTML = '🔗 Yine de Dene';
-                    goBtn.style.pointerEvents = 'auto';
-                }
-
-            } catch (err) {
-                // url.json yok veya boş
-                portalInfo.style.display = 'none';
-                badge.className = 'status-badge status-offline';
-                badge.innerHTML = '<span class="pulse pulse-red"></span> Portal Kapalı';
-                goBtn.href = '#';
-                goBtn.className = 'portal-link disabled';
-                goBtn.innerHTML = '🔒 Portal Şu An Kapalı';
-                goBtn.style.pointerEvents = 'none';
-                lastUpdate.textContent = '—';
-            }
+            });
         }
 
-        function copyURL() {
-            if (currentURL) {
-                navigator.clipboard.writeText(currentURL).then(() => {
-                    const btn = document.querySelector('.copy-btn');
-                    btn.textContent = '✅ Kopyalandı!';
-                    setTimeout(() => { btn.textContent = '📋 Kopyala'; }, 2000);
-                });
-            }
-        }
+        // Son güncelleme
+        document.getElementById('sonGuncelleme').textContent = new Date().toLocaleDateString('tr-TR', {
+            year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
 
-        // Sayfa açılınca kontrol et
-        loadOdevler();
-        checkStatus();
-
-        // Her 30 saniyede bir otomatik kontrol
-        setInterval(checkStatus, 30000);
-        // Ödevleri 2 dakikada bir güncelle (countdown zaten her saniye canlı)
-        setInterval(loadOdevler, 120000);
+        // Başlat
+        portalDurumKontrol();
+        odevleriYukle();
+        setInterval(countdownGuncelle, 1000);
+        setInterval(portalDurumKontrol, 60000); // Her 1 dk portal durumu
     </script>
+
 </body>
 </html>
