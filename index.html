@@ -335,10 +335,10 @@
 
             <div class="format-box">
                 <div class="desc">📌 E-posta konu satırı formatı:</div>
-                <div class="example">[HI-Odev<span style="color:#f59e0b">X</span>] <span style="color:#22c55e">OgrenciNo</span> <span style="color:#38bdf8">Ad Soyad</span></div>
+                <div class="example">Odev<span style="color:#f59e0b">N</span> - <span style="color:#22c55e">ÖğrenciNumarası</span></div>
                 <div class="desc" style="margin-top:8px;">
                     <strong>Örnek:</strong>
-                    <code style="color:#a78bfa; background:rgba(0,0,0,0.3); padding:2px 8px; border-radius:4px;">[HI-Odev1] 2023001 Ali Yılmaz</code>
+                    <code style="color:#a78bfa; background:rgba(0,0,0,0.3); padding:2px 8px; border-radius:4px;">Odev1 - 2140560123</code>
                 </div>
             </div>
 
@@ -385,12 +385,24 @@
                     <li><span class="icon">❓</span> Öğrenci numarası kayıtlı listede yok</li>
                 </ul>
             </div>
+
+        <!-- KVKK Bilgisi -->
+        <div class="card">
+            <h2>🔒 Kişisel Verilerin Korunması</h2>
+            <div class="info-box">
+                <p>Bu sistem <strong>KVKK</strong>'ya uygun olarak tasarlanmıştır:</p>
+                <ul class="rules-list" style="margin-top: 8px;">
+                    <li><span class="icon">✅</span> Sadece <strong>öğrenci numarası</strong> ve <strong>ödev dosyası</strong> kaydedilir</li>
+                    <li><span class="icon">❌</span> <strong>E-posta adresiniz saklanmaz</strong> — sadece otomatik cevap göndermek için anlık olarak okunur</li>
+                    <li><span class="icon">🗑️</span> Tüm veriler dönem sonunda silinir</li>
+                </ul>
+            </div>
         </div>
 
     </div>
 
     <div class="footer">
-        Hesaplamalı İstatistik — Ödev Teslim Sistemi &copy; 2024-2025<br>
+        Hesaplamalı İstatistik — Ödev Teslim Sistemi &copy; 2025–2026<br>
         Son güncelleme: <span id="sonGuncelleme">—</span>
     </div>
 
@@ -538,7 +550,7 @@
                     const odevNum = odev.id.replace('HO', '').replace(/^0+/, '') || '1';
                     html += `<div class="format-box" style="margin-top: 14px;">`;
                     html += `<div class="desc">📧 Bu ödev için e-posta konu satırı:</div>`;
-                    html += `<div class="example">[HI-Odev${odevNum}] <span style="color:#22c55e;">OgrenciNo</span> <span style="color:#38bdf8;">Ad Soyad</span></div>`;
+                    html += `<div class="example">Odev${odevNum} - <span style="color:#22c55e;">ÖğrenciNumarası</span></div>`;
                     html += `</div>`;
 
                     html += `</div>`;

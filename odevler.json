@@ -1,3 +1,129 @@
-{
-  "odevler": []
-}
+[
+  {
+    "id": "Odev1",
+    "baslik": "İki Varyans Eşitliği için F-Testi",
+    "seviye": "Basit",
+    "zorluk": 2,
+    "emoji": "🟢",
+    "konular": [
+      "E10"
+    ],
+    "aciklama": "İki yığının varyanslarının eşitliğini test eden bir F-testi fonksiyonu yazılması ve verilen veri seti üzerinde uygulanması.",
+    "son_tarih": ""
+  },
+  {
+    "id": "Odev2",
+    "baslik": "Yığın Oranı için Güven Aralığı",
+    "seviye": "Basit",
+    "zorluk": 2,
+    "emoji": "🟢",
+    "konular": [
+      "E03"
+    ],
+    "aciklama": "Bir yığın oranı (p) için güven aralığı hesaplayan fonksiyon yazma ve verilen anket verisi üzerinde uygulama.",
+    "son_tarih": ""
+  },
+  {
+    "id": "Odev3",
+    "baslik": "İki Yöntem GA Karşılaştırma (MC Simülasyon)",
+    "seviye": "Orta",
+    "zorluk": 3,
+    "emoji": "🟡",
+    "konular": [
+      "K06",
+      "K07"
+    ],
+    "aciklama": "İki yığın ortalaması farkı için varyans biliniyor (z) ve bilinmiyor-eşit (t) yöntemlerinin GA genişliği ve kapsama olasılığını 5000 MC ile karşılaştırma. Farklı varyans ve örnek çapı kombinasyonlarında raporlama.",
+    "son_tarih": ""
+  },
+  {
+    "id": "Odev4",
+    "baslik": "F-Testi: 1.Tip Hata ve Testin Gücü (MC)",
+    "seviye": "Orta",
+    "zorluk": 3,
+    "emoji": "🟡",
+    "konular": [
+      "E10",
+      "K13"
+    ],
+    "aciklama": "Verilen F-testi fonksiyonuyla 1. tip hata ve testin gücü değerlerini farklı n ve varyans durumlarında MC ile hesaplama ve raporlama.",
+    "son_tarih": ""
+  },
+  {
+    "id": "Odev5",
+    "baslik": "MC Üstel/Tekdüze Parametre Testi ve Güç Analizi",
+    "seviye": "İleri",
+    "zorluk": 4,
+    "emoji": "🔴",
+    "konular": [
+      "K14",
+      "K13"
+    ],
+    "aciklama": "Üstel (veya tekdüze) dağılım parametresi için MC tabanlı hipotez testi fonksiyonu oluşturma ve 1000 MC ile 1. tip hata ve testin gücü analizi.",
+    "son_tarih": ""
+  },
+  {
+    "id": "Odev6",
+    "baslik": "Bootstrap İki Ortalama Farkı Testi (MC Güç Analizi)",
+    "seviye": "İleri",
+    "zorluk": 4,
+    "emoji": "🔴",
+    "konular": [
+      "E06",
+      "K13"
+    ],
+    "aciklama": "Bootstrap ile iki ortalama farkı için hipotez testi oluşturma ve 1000 tekrarlı MC ile 1. tip hata ve testin gücü analizi.",
+    "son_tarih": ""
+  },
+  {
+    "id": "Odev7",
+    "baslik": "Bootstrap GA Kapsama Olasılığı (MC)",
+    "seviye": "İleri",
+    "zorluk": 4,
+    "emoji": "🔴",
+    "konular": [
+      "E06",
+      "K07"
+    ],
+    "aciklama": "Verilen bootstrap GA fonksiyonu ile kapsama olasılığı ve efektif güven düzeyini 1000 MC ile hesaplama.",
+    "son_tarih": ""
+  },
+  {
+    "id": "Odev8",
+    "baslik": "Tek Örneklem t-Testi Fonksiyonu ve Uygulama",
+    "seviye": "Basit",
+    "zorluk": 2,
+    "emoji": "🟢",
+    "konular": [
+      "E01"
+    ],
+    "aciklama": "Varyans bilinmiyorken tek örneklem t-testi fonksiyonu yazma ve bir kalite kontrol verisi üzerinde uygulama.",
+    "son_tarih": ""
+  },
+  {
+    "id": "Odev9",
+    "baslik": "Eşleştirilmiş t-Testi ve MC ile Güç Karşılaştırma",
+    "seviye": "Orta",
+    "zorluk": 3,
+    "emoji": "🟡",
+    "konular": [
+      "E05",
+      "K13"
+    ],
+    "aciklama": "Eşleştirilmiş (paired) t-testi fonksiyonu yazma, bağımsız 2 örneklem t-testi ile güç karşılaştırması (MC).",
+    "son_tarih": ""
+  },
+  {
+    "id": "Odev10",
+    "baslik": "MC Tekdüze Dağılım Parametre Testi ve Güç",
+    "seviye": "İleri",
+    "zorluk": 4,
+    "emoji": "🔴",
+    "konular": [
+      "K14",
+      "K13"
+    ],
+    "aciklama": "Tekdüze (uniform) dağılım üst sınır parametresi (theta) için MC tabanlı hipotez testi fonksiyonu ve 1000 MC ile 1.tip hata ve güç analizi.",
+    "son_tarih": ""
+  }
+]
