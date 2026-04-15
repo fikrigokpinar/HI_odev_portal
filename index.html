@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 Hesaplamalı İstatistik — Ödev Portalı</title>
+    <title>📚 Hesaplamalı İstatistik — Ödev Sistemi</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -263,35 +263,7 @@
             color: #93c5fd;
         }
 
-        /* Portal durumu */
-        .portal-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px 20px;
-            border-radius: 10px;
-            margin: 12px 0;
-        }
-        .portal-status.online {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-        .portal-status.offline {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-        .portal-status .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            animation: blink 2s infinite;
-        }
-        .portal-status.online .dot { background: #22c55e; }
-        .portal-status.offline .dot { background: #ef4444; }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
+
 
         /* Kurallar listesi */
         .rules-list {
@@ -342,7 +314,7 @@
 
     <!-- Header -->
     <div class="header">
-        <h1>📚 Hesaplamalı İstatistik — Ödev Portalı</h1>
+        <h1>📚 Hesaplamalı İstatistik — Ödev Sistemi</h1>
         <p>Ödev teslimi, deadline takibi ve duyurular</p>
     </div>
 
@@ -387,20 +359,7 @@
             </div>
         </div>
 
-        <!-- Portal Durumu -->
-        <div class="card">
-            <h2>🌐 Portal Durumu</h2>
-            <div id="portalDurum" class="portal-status offline">
-                <div class="dot"></div>
-                <div>
-                    <strong id="portalDurumText">Kontrol ediliyor...</strong>
-                    <div id="portalUrl" style="font-size: 0.85rem; color: #94a3b8; margin-top:2px;"></div>
-                </div>
-            </div>
-            <p style="font-size: 0.85rem; color: #64748b; margin-top: 8px;">
-                Portal açıksa ödevlerinizi web üzerinden de yükleyebilirsiniz. Kapalıysa e-posta ile gönderin.
-            </p>
-        </div>
+
 
         <!-- Aktif Ödevler -->
         <div class="card">
@@ -431,14 +390,13 @@
     </div>
 
     <div class="footer">
-        Hesaplamalı İstatistik — Ödev Portal Sistemi &copy; 2024-2025<br>
+        Hesaplamalı İstatistik — Ödev Teslim Sistemi &copy; 2024-2025<br>
         Son güncelleme: <span id="sonGuncelleme">—</span>
     </div>
 
     <script>
         const REPO_BASE = '';  // Aynı repo'dan çekiyoruz (relative path)
         const ODEVLER_JSON_URL = 'odevler.json';
-        const URL_JSON_URL = 'url.json';
 
         // E-posta kopyalama
         function copyEmail() {
@@ -463,33 +421,7 @@
             });
         }
 
-        // Portal durumunu kontrol et
-        async function portalDurumKontrol() {
-            try {
-                const r = await fetch(URL_JSON_URL + '?t=' + Date.now());
-                if (!r.ok) throw new Error('url.json yok');
-                const data = await r.json();
 
-                const el = document.getElementById('portalDurum');
-                const text = document.getElementById('portalDurumText');
-                const urlEl = document.getElementById('portalUrl');
-
-                if (data.status === 'online' && data.url) {
-                    el.className = 'portal-status online';
-                    text.textContent = '🟢 Portal Aktif — Web üzerinden de yükleyebilirsiniz';
-                    urlEl.innerHTML = '<a href="' + data.url + '" target="_blank" style="color:#60a5fa;">' + data.url + '</a>';
-                } else {
-                    el.className = 'portal-status offline';
-                    text.textContent = '🔴 Portal Kapalı — Lütfen e-posta ile gönderin';
-                    urlEl.textContent = data.updated_at ? 'Son güncelleme: ' + data.updated_at : '';
-                }
-            } catch (e) {
-                const el = document.getElementById('portalDurum');
-                const text = document.getElementById('portalDurumText');
-                el.className = 'portal-status offline';
-                text.textContent = '🔴 Portal durumu bilinmiyor — E-posta ile gönderin';
-            }
-        }
 
         // Countdown hesapla
         function countdownHesapla(deadlineStr) {
@@ -645,10 +577,8 @@
         });
 
         // Başlat
-        portalDurumKontrol();
         odevleriYukle();
         setInterval(countdownGuncelle, 1000);
-        setInterval(portalDurumKontrol, 60000); // Her 1 dk portal durumu
     </script>
 
 </body>

@@ -1,16 +1,15 @@
-# 📚 Hesaplamalı İstatistik — Ödev Portal Yönlendirici
+# 📚 Hesaplamalı İstatistik — Ödev Sistemi
 
-Bu sayfa öğrencilerin ödev yükleme portalına erişebilmesi için güncel adresi gösterir.
+Bu sayfa öğrencilerin aktif ödevleri görmesi, deadline takibi yapması ve teslim yönergelerini öğrenmesi içindir.
 
-Portal her açıldığında adres değişir, bu sayfa otomatik olarak güncellenir.
+## Ödev Teslim Yöntemi
 
-## Nasıl Çalışır?
+Ödevler **e-posta** ile teslim edilir:
 
-1. Hoca portalı başlattığında Cloudflare Tunnel yeni bir URL alır
-2. Script bu URL'yi `url.json` dosyasına yazar ve GitHub'a push eder
-3. Bu sayfa `url.json`'dan güncel URL'yi okur ve öğrenciye gösterir
-4. Portal kapatıldığında "kapalı" durumu gösterilir
+- **Adres:** `hesaplamali.istatisitik.odev@gmail.com`
+- **Konu:** `[HI-OdevX] OgrenciNo Ad Soyad`
+- **Ek:** `.m` dosyası (attachment olarak)
 
 ## Öğrenciler İçin
 
-Bu sayfanın adresini tarayıcınıza kaydedin. Portal açık olduğunda buradan erişebilirsiniz.
+Bu sayfanın adresini tarayıcınıza kaydedin. Aktif ödevler, deadline'lar ve dosya indirme linkleri burada gösterilir.
