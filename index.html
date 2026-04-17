@@ -354,9 +354,6 @@
                 </ul>
             </div>
 
-            <div class="warn-box">
-                <strong>⏰ Geç Teslim Uyarısı:</strong> Deadline sonrası gönderilen ödevlerden <strong>%10</strong> puan düşülür!
-            </div>
         </div>
 
 
@@ -385,19 +382,6 @@
                     <li><span class="icon">❓</span> Öğrenci numarası kayıtlı listede yok</li>
                 </ul>
             </div>
-
-        <!-- KVKK Bilgisi -->
-        <div class="card">
-            <h2>🔒 Kişisel Verilerin Korunması</h2>
-            <div class="info-box">
-                <p>Bu sistem <strong>KVKK</strong>'ya uygun olarak tasarlanmıştır:</p>
-                <ul class="rules-list" style="margin-top: 8px;">
-                    <li><span class="icon">✅</span> Sadece <strong>öğrenci numarası</strong> ve <strong>ödev dosyası</strong> kaydedilir</li>
-                    <li><span class="icon">❌</span> <strong>E-posta adresiniz saklanmaz</strong> — sadece otomatik cevap göndermek için anlık olarak okunur</li>
-                    <li><span class="icon">🗑️</span> Tüm veriler dönem sonunda silinir</li>
-                </ul>
-            </div>
-        </div>
 
     </div>
 
@@ -529,7 +513,7 @@
                     // Countdown
                     if (cd) {
                         if (cd.expired) {
-                            html += `<div class="error-box">⏰ <strong>Süre doldu!</strong> Geç teslimlerde <strong>%10 ceza</strong> uygulanır.</div>`;
+                            html += `<div class="error-box">⏰ <strong>Süre doldu!</strong></div>`;
                         } else {
                             html += `<div id="cd_${odev.id}" data-deadline="${odev.deadline}">${cd.html}</div>`;
                         }
@@ -575,7 +559,7 @@
                 const dl = el.getAttribute('data-deadline');
                 const cd = countdownHesapla(dl);
                 if (cd.expired) {
-                    el.innerHTML = `<div class="error-box">⏰ <strong>Süre doldu!</strong> Geç teslimlerde <strong>%10 ceza</strong> uygulanır.</div>`;
+                    el.innerHTML = `<div class="error-box">⏰ <strong>Süre doldu!</strong></div>`;
                     el.removeAttribute('data-deadline');
                 } else {
                     el.innerHTML = cd.html;
