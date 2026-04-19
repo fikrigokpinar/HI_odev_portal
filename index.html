@@ -328,7 +328,7 @@
             <div class="email-display">
                 <div class="label">📮 Ödev Gönderim Adresi</div>
                 <div class="address" id="emailAddr" onclick="copyEmail()" title="Kopyalamak için tıklayın">
-                    hesaplamali.istatisitik.odev@gmail.com
+                    hesaplamali.istatistik.odev@gmail.com
                 </div>
                 <div class="hint" id="copyHint">📋 Kopyalamak için tıklayın</div>
             </div>
@@ -396,7 +396,7 @@
 
         // E-posta kopyalama
         function copyEmail() {
-            const email = 'hesaplamali.istatisitik.odev@gmail.com';
+            const email = 'hesaplamali.istatistik.odev@gmail.com';
             navigator.clipboard.writeText(email).then(() => {
                 document.getElementById('copyHint').textContent = '✅ Kopyalandı!';
                 setTimeout(() => {
