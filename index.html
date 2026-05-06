@@ -292,6 +292,43 @@
         }
         .no-odev .emoji { font-size: 3rem; margin-bottom: 12px; }
 
+        /* Geçmiş ödevler */
+        .gecmis-odev-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(100, 116, 139, 0.2);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin: 8px 0;
+            opacity: 0.75;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .gecmis-odev-card .gtitle { font-size: 0.95rem; color: #94a3b8; }
+        .gecmis-odev-card .gdate { font-size: 0.8rem; color: #64748b; }
+        .gecmis-odev-card .gfiles { display: flex; gap: 8px; flex-wrap: wrap; }
+        .gecmis-odev-card .gfile {
+            font-size: 0.8rem;
+            color: #475569;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(100,116,139,0.2);
+            padding: 3px 10px;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+        .gecmis-odev-card .gfile:hover { color: #94a3b8; border-color: rgba(100,116,139,0.5); }
+
+        details summary {
+            cursor: pointer;
+            color: #64748b;
+            font-size: 0.9rem;
+            padding: 10px 0;
+            user-select: none;
+        }
+        details summary:hover { color: #94a3b8; }
+
         /* Footer */
         .footer {
             text-align: center;
@@ -391,8 +428,10 @@
     </div>
 
     <script>
-        const REPO_BASE = '';  // Aynı repo'dan çekiyoruz (relative path)
         const ODEVLER_JSON_URL = 'odevler.json';
+
+        // Inline fallback data (otomatik güncellenir, fetch başarısız olursa kullanılır)
+        const INLINE_ODEVLER = {"odevler": [{"id": "HO01", "baslik": "İki Varyans Eşitliği için F-Testi", "aciklama": "İki yığının varyanslarının eşitliğini test eden bir F-testi fonksiyonu yazılması ve verilen veri seti üzerinde uygulanması.", "yonerge": "", "deadline": "2026-04-24T23:59:59", "soru_sayisi": 2, "dosyalar": [{"ad": "HO01_ODEV.zip", "boyut": 906}, {"ad": "HO01_ODEV.m", "boyut": 1329}], "yayinlanma_tarihi": "2026-04-17T14:08:25.731394"}]}; // INJECT_INLINE_DATA
 
         // E-posta kopyalama
         function copyEmail() {
@@ -468,89 +507,126 @@
         // Ödevleri yükle
         async function odevleriYukle() {
             const container = document.getElementById('odevListesi');
+            let data = null;
+
+            // Önce fetch dene (GitHub Pages veya HTTP sunucu)
             try {
                 const r = await fetch(ODEVLER_JSON_URL + '?t=' + Date.now());
-                if (!r.ok) throw new Error('odevler.json yok');
-                const data = await r.json();
-                const odevler = data.odevler || [];
-
-                if (odevler.length === 0) {
-                    container.innerHTML = `
-                        <div class="no-odev">
-                            <div class="emoji">📭</div>
-                            <p>Henüz yayınlanmış ödev yok.</p>
-                            <p style="font-size:0.85rem; margin-top:8px;">Yeni ödevler burada görünecek.</p>
-                        </div>
-                    `;
-                    return;
+                if (r.ok) {
+                    data = await r.json();
                 }
-
-                let html = '';
-                odevler.forEach(odev => {
-                    const cd = odev.deadline ? countdownHesapla(odev.deadline) : null;
-                    const dlStr = odev.deadline ? deadlineFormatla(odev.deadline) : '?';
-
-                    html += `<div class="odev-card">`;
-                    html += `<div class="odev-header">`;
-                    html += `<div class="odev-title">📋 ${odev.id} — ${odev.baslik}</div>`;
-                    html += `<div class="odev-badge">${odev.soru_sayisi || '?'} Soru</div>`;
-                    html += `</div>`;
-
-                    if (odev.aciklama) {
-                        html += `<div class="odev-desc">${odev.aciklama}</div>`;
-                    }
-
-                    if (odev.yonerge) {
-                        html += `<div class="odev-yonerge">${odev.yonerge}</div>`;
-                    }
-
-                    // Deadline
-                    html += `<div style="margin: 10px 0;">`;
-                    html += `<span style="color:#94a3b8; font-size:0.9rem;">📅 Deadline: </span>`;
-                    html += `<strong style="color:#f59e0b;">${dlStr}</strong>`;
-                    html += `</div>`;
-
-                    // Countdown
-                    if (cd) {
-                        if (cd.expired) {
-                            html += `<div class="error-box">⏰ <strong>Süre doldu!</strong></div>`;
-                        } else {
-                            html += `<div id="cd_${odev.id}" data-deadline="${odev.deadline}">${cd.html}</div>`;
-                        }
-                    }
-
-                    // Dosyalar
-                    if (odev.dosyalar && odev.dosyalar.length > 0) {
-                        html += `<div class="file-links">`;
-                        odev.dosyalar.forEach(d => {
-                            const icon = d.ad.endsWith('.zip') ? '📦' : (d.ad.endsWith('.m') ? '📄' : '📎');
-                            const boyut = d.boyut > 1024 ? `${(d.boyut / 1024).toFixed(1)} KB` : `${d.boyut} B`;
-                            html += `<a href="dosyalar/${d.ad}" class="file-link" download>${icon} ${d.ad} <span style="color:#64748b;font-size:0.75rem;">(${boyut})</span></a>`;
-                        });
-                        html += `</div>`;
-                    }
-
-                    // Konu satırı örneği
-                    const odevNum = odev.id.replace('HO', '').replace(/^0+/, '') || '1';
-                    html += `<div class="format-box" style="margin-top: 14px;">`;
-                    html += `<div class="desc">📧 Bu ödev için e-posta konu satırı:</div>`;
-                    html += `<div class="example">Odev${odevNum} - <span style="color:#22c55e;">ÖğrenciNumarası</span></div>`;
-                    html += `</div>`;
-
-                    html += `</div>`;
-                });
-
-                container.innerHTML = html;
-
             } catch (e) {
+                // file:// protokolünde fetch çalışmaz, inline data'ya geç
+            }
+
+            // Fetch başarısız olduysa inline data kullan
+            if (!data && INLINE_ODEVLER) {
+                data = INLINE_ODEVLER;
+            }
+
+            if (!data) {
                 container.innerHTML = `
                     <div class="no-odev">
                         <div class="emoji">📭</div>
                         <p>Ödevler yüklenemedi.</p>
-                        <p style="font-size:0.85rem; margin-top:8px; color:#64748b;">${e.message}</p>
+                        <p style="font-size:0.85rem; margin-top:8px; color:#64748b;">Sayfayı yenileyip tekrar deneyin.</p>
                     </div>
                 `;
+                return;
             }
+
+            const odevler = data.odevler || [];
+            const now = new Date();
+
+            const aktifler = odevler.filter(o => o.deadline ? new Date(o.deadline) > now : true);
+            const gecmisler = odevler.filter(o => o.deadline && new Date(o.deadline) <= now);
+
+            let html = '';
+
+            if (aktifler.length === 0) {
+                html += `
+                    <div class="no-odev">
+                        <div class="emoji">📭</div>
+                        <p style="font-size:1.05rem; color:#94a3b8;">Şu an aktif ödev bulunmamaktadır.</p>
+                        <p style="font-size:0.85rem; margin-top:8px;">Yeni ödevler yayınlandığında burada görünecek.</p>
+                    </div>
+                `;
+            } else {
+                aktifler.forEach(odev => {
+                    html += renderOdevCard(odev);
+                });
+            }
+
+            // Geçmiş ödevler
+            if (gecmisler.length > 0) {
+                html += `<details style="margin-top:16px;">`;
+                html += `<summary>📁 Geçmiş Ödevler (${gecmisler.length})</summary>`;
+                gecmisler.forEach(odev => {
+                    const dlStr = odev.deadline ? deadlineFormatla(odev.deadline) : '?';
+                    const dosyaLinks = (odev.dosyalar || []).map(d => {
+                        const icon = d.ad.endsWith('.zip') ? '📦' : (d.ad.endsWith('.m') ? '📄' : '📎');
+                        return `<a href="dosyalar/${d.ad}" class="gfile" download>${icon} ${d.ad}</a>`;
+                    }).join('');
+                    html += `
+                        <div class="gecmis-odev-card">
+                            <div>
+                                <div class="gtitle">📋 ${odev.id} — ${odev.baslik}</div>
+                                <div class="gdate">📅 Deadline: ${dlStr} — ⏰ Süresi geçti</div>
+                            </div>
+                            <div class="gfiles">${dosyaLinks}</div>
+                        </div>
+                    `;
+                });
+                html += `</details>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function renderOdevCard(odev) {
+            const cd = odev.deadline ? countdownHesapla(odev.deadline) : null;
+            const dlStr = odev.deadline ? deadlineFormatla(odev.deadline) : '?';
+
+            let html = `<div class="odev-card">`;
+            html += `<div class="odev-header">`;
+            html += `<div class="odev-title">📋 ${odev.id} — ${odev.baslik}</div>`;
+            html += `<div class="odev-badge">${odev.soru_sayisi || '?'} Soru</div>`;
+            html += `</div>`;
+
+            if (odev.aciklama) html += `<div class="odev-desc">${odev.aciklama}</div>`;
+            if (odev.yonerge) html += `<div class="odev-yonerge">${odev.yonerge}</div>`;
+
+            html += `<div style="margin: 10px 0;">`;
+            html += `<span style="color:#94a3b8; font-size:0.9rem;">📅 Deadline: </span>`;
+            html += `<strong style="color:#f59e0b;">${dlStr}</strong>`;
+            html += `</div>`;
+
+            if (cd) {
+                if (cd.expired) {
+                    html += `<div class="error-box">⏰ <strong>Süre doldu!</strong></div>`;
+                } else {
+                    html += `<div id="cd_${odev.id}" data-deadline="${odev.deadline}">${cd.html}</div>`;
+                }
+            }
+
+            if (odev.dosyalar && odev.dosyalar.length > 0) {
+                html += `<div class="file-links">`;
+                odev.dosyalar.forEach(d => {
+                    const icon = d.ad.endsWith('.zip') ? '📦' : (d.ad.endsWith('.m') ? '📄' : '📎');
+                    const boyut = d.boyut > 1024 ? `${(d.boyut / 1024).toFixed(1)} KB` : `${d.boyut} B`;
+                    html += `<a href="dosyalar/${d.ad}" class="file-link" download>${icon} ${d.ad} <span style="color:#64748b;font-size:0.75rem;">(${boyut})</span></a>`;
+                });
+                html += `</div>`;
+            }
+
+            const odevNum = odev.id.replace('HO', '').replace(/^0+/, '') || '1';
+            html += `<div class="format-box" style="margin-top: 14px;">`;
+            html += `<div class="desc">📧 Bu ödev için e-posta konu satırı:</div>`;
+            html += `<div class="example">Odev${odevNum} - <span style="color:#22c55e;">ÖğrenciNumarası</span></div>`;
+            html += `</div>`;
+
+            html += `</div>`;
+            return html;
         }
 
         // Countdown güncelle (her saniye)
