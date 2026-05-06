@@ -18,6 +18,15 @@
         }
       ],
       "yayinlanma_tarihi": "2026-04-17T14:08:25.731394"
+    },
+    {
+      "id": "HO02",
+      "baslik": "Yığın Oranı için Güven Aralığı",
+      "deadline": "2026-05-15T13:40",
+      "aciklama": "Bir yığın oranı (p) için güven aralığı hesaplayan fonksiyon yazma ve verilen anket verisi üzerinde uygulama.",
+      "soru_sayisi": 2,
+      "dosyalar": [],
+      "yayinlanma_tarihi": "2026-05-06T13:40:45.074243"
     }
   ]
 }
