@@ -18,20 +18,6 @@
         }
       ],
       "yayinlanma_tarihi": "2026-04-17T14:08:25.731394"
-    },
-    {
-      "id": "HO02",
-      "baslik": "test",
-      "deadline": "2026-05-15T13:40",
-      "aciklama": "test",
-      "soru_sayisi": 2,
-      "dosyalar": [
-        {
-          "ad": "HO02_ODEV.zip",
-          "boyut": 1439
-        }
-      ],
-      "yayinlanma_tarihi": "2026-05-06T15:10:20.623527"
     }
   ]
 }
