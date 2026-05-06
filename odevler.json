@@ -25,8 +25,13 @@
       "deadline": "2026-05-15T13:40",
       "aciklama": "test",
       "soru_sayisi": 2,
-      "dosyalar": [],
-      "yayinlanma_tarihi": "2026-05-06T15:00:36.022029"
+      "dosyalar": [
+        {
+          "ad": "HO02_ODEV.zip",
+          "boyut": 1439
+        }
+      ],
+      "yayinlanma_tarihi": "2026-05-06T15:09:50.290321"
     }
   ]
 }
